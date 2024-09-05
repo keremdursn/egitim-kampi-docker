@@ -106,7 +106,8 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'docker build -t first-build .'
+                echo 'build...'
+
             }
         }
         
@@ -154,7 +155,74 @@ sonra bizim yazdığımız checkout adımına gerek yokmuş dedi
 
 sonra pipeline kodumuzdaki build stagenin stepini 
         sh 'docker build -t first-build' 
-olarak değiştirdi.
+olarak değiştirdi. 
+bunu gite pushladı
+
+daha detayli gerçekçi bir pipeline yazmayı bize bıraktı.(öğren)
+
+şimdi artık bu api yi deploy edelim çalıştıralım artık her şey hazır
+
+bunu nerde çalıştırcaz kubernetes dedi
+dockerın içinde bir kubernetesi çalışıyomuş öyle dedi
+argocd kurucakmış buraya onunla uı dan bi kaç konfigürasyonla deploymant filelarımızı kuberneteste çalıştırıcaz uyg nın çalıştığını göstercek maksat argocd
+
+https://x.com/mstryoda_/status/1362056930886361092
+
+
+ArgoCD ile Kubernetes cluster'ıne deployment yapalım.
+
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+2.adım projemiz için deployment oluştujrcaz gerçekten dockerhubdan çekilebilcek bi proje olsun diyo onun manifestlerini oluşturalım
+
+k create deployment nginx --iamge=nginx -n default --dry-run=client -o yaml 
+bu bizim deployment manifestimizmiş	(k yada kubectl)
+
+sanırım altına deployment.yaml yazdı tam göremedim orayı)ha bunu deployment.yaml adında bi dosya şeklinde git repo dosyamızın içine atmış
+
+kuberneteste uygulamayı çalıştırmak istediğimizde çeşitli resourcelar var deployment diye bişi var içinde containerları alıyo mesela nginx bunu deploy etçez.
+
+network için erişilebilir olması için service diye bi objede var onuda oluşturmamız lazımmış:
+k expose deployment nginx --port 80 --target-port 80 --dry-run=client -o yaml
+
+deployments.app "nginx" not found hatası aldı bunu yazdı:
+k create deployment nginx --iamge=nginx -n default
+sonra bunu k delete deployment -n default nginx yazıp sildi
+
+sonra oluşturduğu bu deployment.yaml ve service.yaml i deployment adında bir dosya oluşturup içine attı ve repoya pushladı
+
+
+
+
+
+
+
+
+
+
+
+
+Kubernetes bileşenleri
+Aşağıda bazı kubernetes bileşenleri ve karşılıkları yer almaktadır.
+
+Pod – Container/Uygulamalar yer alır.
+Deployment – Pod oluşturma tanımları yer alır.
+Service – Pod erişim bilgileri yer alır.
+Ingress – Uygulama/Pod trafiğini yönlendirir.
+ConfigMap – Uygulamaya ait ayarlar yer alır.
+Secrets – Uygulamaya ait bilgiler base64 formatında yer alır.
+Volumes – Uygulamaya ait kalıcı veri tanımları yer alır.
+StatefulSet – Verilerin kalıcı olduğu uygulamalarda kullanılır.
+NOT: pod ifadesi container ifadesine karşılık gelmektedir.
+
+
+
+
+
+
+
+
 
 
 
