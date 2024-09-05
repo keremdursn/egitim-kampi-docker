@@ -57,3 +57,109 @@ CMD ["/app/main"]
 mantığıda ilk başta golang kurulu olan bi işletim sistemi kuruyoruz onun içerisinde build alıyoruz ve o build aldığımız binaryi golang olmayan bir Linux işletim sisteminde çalıştırıyoruz. 
 
 scratch ile bunu daha da düşerebilirz alpine yerine scratch kullanarak
+
+maine bir http func yazdık sonra 
+
+
+jenkins için bir dosya ve dockerfile oluşturduk jenkinsi çalıştırınca benim dockera ihtiyacım olucak ama içersinde docker yok docker benim kendi makinamda dockerfile içinde 
+get.docker la SL sini jenkins makinasına kurdum.
+
+FROM jenkins/jenkins
+
+USER root
+RUN apt-get update \
+      && apt-get install -y sudo
+      && rm -rf /var/lib/apt/lists/*
+RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
+RUN curl /sSL https://get.docker.com | sh
+
+localhostta jenkinse girdikten sonra new item diyorum multibranch pipeline seçelim
+
+sonra script kısmına gelip hello worldü seçtik buraya stageler ekledi 
+1-static code analysiz 
+2-test
+3-buid
+4-deploy
+çok basit bi pipeline yazdık aslında
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {      
+            steps {
+                checkout scm   
+            }
+        }
+        
+        stage('Static Code Analysiz') {
+            steps {
+                echo 'static analysis...'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                echo 'testler calisti'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'docker build -t first-build .'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                echo 'deploying...'
+            }
+        }
+    }
+}
+
+sonra bu daha önceki docker buildi jenkinsin içine alalım diyor gittik githubda repo açtık
+sonra bi gitignore eksikti onu açtık docker buildin oraya sonra mainimizi dockerfileı falan
+commit ettik 
+
+jenkinsile pipeline oluşturmayı cı cıd falan bişeyler yaptık stageler oluşturdu pipeline faln
+
+şimdide bir build alcak bu kadar bilgilerle git clone adresini aldı
+jenkinse gidiyor configure e geliyor github projete urli yapıştırıyor 
+poll scm i tikliiyor buda repoma yeni commit geldiğinde build alıyo:
+* * * * * her dakikada bir build almasını sağlamak için bunu yazdı.
+
+
+pipeline script kısmına gelip yeni stage ekledi :
+
+stages {
+    stage('Checkout') {
+  	steps{
+	    checkout scm
+     }
+  }
+}
+
+
+sonra bu scripti kodumuzu repo ya Jenkinsfile olarak ekledi
+
+git add ler ile
+
+hata aldığında jenkins makinasına bağlanıp şu aşağıdakileri yapmış
+docker start 392
+docker exec -it 392 /bin/sh
+git config --global https.sslVerify false
+
+sonra bizim yazdığımız checkout adımına gerek yokmuş dedi
+
+sonra pipeline kodumuzdaki build stagenin stepini 
+        sh 'docker build -t first-build' 
+olarak değiştirdi.
+
+
+
+
+
+
+
+
