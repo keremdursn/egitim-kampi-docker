@@ -1,0 +1,59 @@
+Dev-Ops: otomasyon
+
+dockerfile yazma:
+golang compile etçez localde compile ettiğimi dockerda etçem benim belirttiğim bi işletim sistemi içinde çalışan proje hale gelicek 
+
+FROM golang:1.20.5-alpine 
+
+RUN go version
+
+
+dockerfile hazırladık ama image oluşmadı build almamız gerekiyomuş
+docker build -t egitim-kampi-docker dedik docker huba login olmadığım için sorun çıktı düzelttik
+
+docker build -t egitim-kampi-docker
+docker run egitim-kampi-docker dedik 
+docker ps
+docker images | grep oluşturduğumuz_image
+
+
+dockerfileda her değişiklik yaptığımızda tekrar build alıyoruz sonra runlıyoruz.
+
+FROM golang:1.20.5-alpine 
+
+CMD ["go", "version"]
+
+---------------------------------------------------------------
+
+FROM golang:1.20.5-alpine 
+
+COPY . .
+
+RUN go build main.go
+
+CMD ["./main"]
+
+en temel haliyle bu şekilde  
+
+---------------------------------------------------------------
+
+bu yazdığımız image ın boyutu çok büyük o yüzden bi takım düzenlemeler falan yaptık ve düştü
+
+FROM golang:1.20.5-alpine AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN go build main.go
+
+FROM alpine
+
+COPY --from=builder /app /app
+
+CMD ["/app/main"]
+
+
+mantığıda ilk başta golang kurulu olan bi işletim sistemi kuruyoruz onun içerisinde build alıyoruz ve o build aldığımız binaryi golang olmayan bir Linux işletim sisteminde çalıştırıyoruz. 
+
+scratch ile bunu daha da düşerebilirz alpine yerine scratch kullanarak

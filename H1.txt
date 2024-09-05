@@ -1,0 +1,67 @@
+---------------------------------Microservice applications ------------------------------
+hepsi kendi datasını yönetir.
+çakışmayı en aza indiririz 
+HABERLEŞME : 
+-SENKRON;
+HTTP, GRPC İLE
+-ASENKRON ;
+messaging( message brokers : rabbitmq)
+(bu q queu yani kuyruk muş veri yapılarındaki)
+modüler monolip araştır!
+
+unit test: kodu mocklayarak bazı şeyleri bypass ederek bazı hesaplamaları doğru yapıyomu
+yapmıyor mu test etmek işte
+
+integration test: birbirinizle bağımlı olduğunuz harici sistemleride  gerçekten işin içine katarak 
+iki servisimiz arasında bi containerda yadığınız diğer servisi kaldırıp o iki servisle haberleşmesini sağlarsın isteği atıp doğru cevabı  alabiliyomusun onu test edersin 
+
+consumer driven contract testing: 
+
+mock: varsaymak ssahte objeler koymak sahtebi db ye bağlanmış gibi sahte reposilar koyuyosun
+
+---------------------------------------------------------------------------------------
+
+SCALING:
+CQRS: bizim bi ürün ekleme bide ürün arama kodumuz var bunun servis bazında ayırdığımızı düşünelim bi kısım var sadece  yazma bi kısım sadece rpository okuma işlemi yapıyor 
+
+Readi Write ı ayrı database yaptığımız mikroservis mantığıyla.
+bu iki veritabanı arasındaki haberleşmeyi message broker ile sağlayabilrirz.
+
+biz precess olarak bunu ayırdığımızda ne sağlıyo bize okuma daha fazla process olarak onu ayrı scale edebilriz 
+
+öyle bi scaleimiz varki veritabanındada ayırcaz 
+sql sorgularında mesela kullanıcı araması yaparken index kullanılır daha hızlı olsun diye index dedğimiz şey tree dir bazıları yazma bazıları okuma için optimizedir ve biz bunu scaleimize göre okuma işlemine tamamen okumaya özel ayırıp daha hızlı search kompleks searchler yapabilceğimiz bir veritabanı yazma işlemne özel yazmada daha hızlı hızlı bi write yapabilceğimiz veritabanı kullanabilriz.
+
+-
+----------------------------CAP - teoremi :------------------------------------
+
+dağıtık sistemlerle çalıştığın sistemde bu 3 şartı aynı anda sağlayamazsın
+Consistent - veri her yerde tutarlı olsun
+avaliabl - verime istediğim an erişebileyim
+Partition tolerance - sistemim herhangi bi kopmada bunu tolere edebilsin .
+
+İkisine seç bunlardan diyor :
+
+iletişim bazen kesilebilir network kopabilir bu durumdada ya consistency i seçeriz yada availabilityi seçeriz :
+
+AVAİLABLE + PART TOL : benim bi db im var ve yazma işlemi yapıcam ve benim sistemim available olsun genede bi şekilde cevap verebilmek istiyorum kullanıcıya sonradan güncelleme yaptığımızda bir tane db bağlantısı koptuğu için bi node a gitti bi nodea gidemedi burda consistency bozuldu. yanlış veri gösterir ama availabel sonuçta bi istek geldiğinde veriyi yanlış da olsa gösteriyor
+
+CONSISTENCY : önemli olan doğru veriyi göndermek diyosa balantı koptuğu an o sistemin hizmet vermeyi bırakır
+
+seçim yapma gibi bi durum yok belirli domainler consistency olmalıdır belirli domainlerde availabel olmalıdır diyor.
+
+CACHING : 
+
+read requestlerin önüne bir cache koyabiliriz dedi. çok fazla erişilen veri var ben bu sistemi hızlandırmak istiyorum dediğinde cache koyabilirsin önüne (redis)
+
+Cache invalidation - cachein güncellenmesini nasıl yapıcam herşeyi cache e almakta mantıklı değilmiş.
+
+	
+Kubernetes: deployment stratejileri uygulayabiliyomuşuz blue green , rolling update,
+ lift shift
+
+
+
+
+
+
